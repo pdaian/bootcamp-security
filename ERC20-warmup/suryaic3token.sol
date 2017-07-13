@@ -29,6 +29,8 @@ contract TestToken {
     }
 
     function deposit() payable returns (bool success) {
+        if (balances[msg.sender] + msg.value < msg.value) return false;
+        if (total + msg.value < msg.value) return false;
         balances[msg.sender] += msg.value;
         total += msg.value;
         return true;
@@ -45,6 +47,7 @@ contract TestToken {
     function transfer(address _to, uint256 _value) returns (bool success) {
         if (balances[msg.sender] < _value) return false;
 
+        if (balances[_to] + _value < _value) return false;
         balances[msg.sender] -= _value;
         balances[_to] += _value;
 
@@ -67,6 +70,8 @@ contract TestToken {
     function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
         if (balances[_from] < _value) return false;
         if ( allowed[_from]._allowed[msg.sender] < _value) return false;
+        if (balances[_to] + _value < _value) return false;
+
         balances[_from] -= _value;
         balances[_to] += _value;
         allowed[_from]._allowed[msg.sender] -= _value;
