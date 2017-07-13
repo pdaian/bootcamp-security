@@ -1,10 +1,7 @@
 pragma solidity ^0.4.13;
 
 contract IC3Token {
-    struct Allowance {
-        address target;
-        uint256 total_value;
-    }
+
     uint8 public constant decimals = 18;
     string public constant name = "IC3 2012 bootcamp token";
     string public constant symbol = "IC3";
@@ -27,7 +24,7 @@ contract IC3Token {
     }
 
     function transfer(address _to, uint _value) returns(bool success){
-        if(balances[msg.sender] >= _value){
+        if(balances[msg.sender] >= _value && supply >= value && balances[_to] + value > balances[_to]){
             balances[msg.sender] -= _value;
             balances[_to] += _value;
             Transfer(msg.sender, _to, _value);
@@ -38,9 +35,13 @@ contract IC3Token {
 
     function transferFrom(address _from, address _to, uint _value) returns (bool success){
         mapping(address => uint256) allowed = approvals[_from];
-        if (allowed[msg.sender] >= 0){
+        if (allowed[msg.sender] >= _value &&
+            balances[_from] >= _value &&
+            balances[_to] + value > balances[_to]){
+
             balances[_from] -= _value;
             balances[_to] += _value;
+            allowed[msg.sender]  -= value;
             Transfer(_from, _to, _value);
             return true;
         }
@@ -48,9 +49,6 @@ contract IC3Token {
     }
 
     function approve(address _spender, uint256 _value) returns (bool success){
-        if (_value > balances[_spender]) {
-            return false;
-        }
         approvals[msg.sender][_spender] = _value;
         Approval(msg.sender, _spender, _value);
         return true;
@@ -61,13 +59,17 @@ contract IC3Token {
     }
 
     function deposit() payable returns (bool success){
+        if (supply + msg.value < supply || balances[msg.sender] + msg.value < balances[msg.sender]){
+            msg.sender.transfer(msg.value);
+            return false;
+        }
         balances[msg.sender] += msg.value;
         supply += msg.value;
         return true;
     }
 
     function withdraw(uint256 _amount) returns (bool success){
-        if (balances[msg.sender] >= _amount){
+        if (balances[msg.sender] >= _amount && supply >= amount){
             balances[msg.sender] -= _amount;
             msg.sender.transfer(_amount);
             supply -= _amount;
