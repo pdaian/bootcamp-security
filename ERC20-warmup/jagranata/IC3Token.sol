@@ -21,10 +21,10 @@ contract IC3Token {
   }
 
   /* deposit 1 wei for 1 ic3 */
-  function deposit (uint256 amount) payable returns (bool success) {
-    if (msg.value < amount) return false;
-    balances[msg.sender] = SafeMathLib.safeAdd(amount, balances[msg.sender]);
-    totalSupply += amount;
+  function deposit () payable returns (bool success) {
+    if (msg.value == 0) return false;
+    balances[msg.sender] = SafeMathLib.safeAdd(msg.value, balances[msg.sender]);
+    totalSupply += msg.value;
     return true;
   }
 
@@ -34,7 +34,12 @@ contract IC3Token {
     if (balances[msg.sender] < amount) return false;
     balances[msg.sender] -= amount;
     totalSupply -= amount;
-    return msg.sender.send(amount);
+    bool rv = msg.sender.send(amount);
+    if (!rv) {
+      balances[msg.sender] += amount;
+      totalSupply += amount;
+    }
+    return rv;
   }
 
   /* send _value amount of tokens to _to */
