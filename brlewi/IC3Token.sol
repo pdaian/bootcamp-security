@@ -25,7 +25,7 @@ contract IC3Token
 
     mapping (address => uint256) private balances;
 
-    uint256 private totalTokens = 0;
+    uint256 private totalTokens = 0 wei;
 
     uint8 public constant decimals = 18;
     string public constant name = "IC3 2017 Bootcamp Token";
