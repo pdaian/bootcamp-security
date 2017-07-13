@@ -4,6 +4,8 @@ import "./SafeMathLib.sol";
 
 contract IC3Token {
 
+  using SafeMathLib for uint256;
+
   uint8 public constant decimals = 18;
   string public constant name = "IC3 2017 Bootcamp Token";
   string public constant symbol = "IC3";
@@ -23,8 +25,8 @@ contract IC3Token {
   /* deposit 1 wei for 1 ic3 */
   function deposit () payable returns (bool success) {
     if (msg.value == 0) return false;
-    balances[msg.sender] = SafeMathLib.safeAdd(msg.value, balances[msg.sender]);
-    totalSupply += msg.value;
+    balances[msg.sender] = balances[msg.sender].safeAdd(msg.value);
+    totalSupply = totalSupply.safeAdd(msg.value);
     return true;
   }
 
@@ -32,12 +34,12 @@ contract IC3Token {
   function withdraw (uint256 amount) returns (bool success) {
     if (amount == 0) return false;
     if (balances[msg.sender] < amount) return false;
-    balances[msg.sender] -= amount;
-    totalSupply -= amount;
+    balances[msg.sender] = balances[msg.sender].safeSubtract(amount);
+    totalSupply = totalSupply.safeSubtract(amount);
     bool rv = msg.sender.send(amount);
     if (!rv) {
-      balances[msg.sender] += amount;
-      totalSupply += amount;
+      balances[msg.sender] = balances[msg.sender].safeAdd(amount);
+      totalSupply = totalSupply.safeAdd(amount);
     }
     return rv;
   }
@@ -46,8 +48,8 @@ contract IC3Token {
   function transfer (address _to, uint256 _value) returns (bool success) {
     if (_value == 0) return false;
     if (balances[msg.sender] < _value) return false;
-    balances[msg.sender] -= _value;
-    balances[_to] += _value;
+    balances[msg.sender] = balances[msg.sender].safeSubtract(_value);
+    balances[_to] = balances[_to].safeAdd(_value);
     Transfer(msg.sender, _to, _value);
     return true;
   }
@@ -58,9 +60,9 @@ contract IC3Token {
     if (msg.sender == _from) return false;
     if (balances[_from] < _value) return false;
     if (allowance(_from, msg.sender) < _value) return false;
-    approvals[_from][msg.sender] -= _value;
-    balances[_from] -= _value;
-    balances[_to] += _value;
+    approvals[_from][msg.sender] = approvals[_from][msg.sender].safeSubtract(_value);
+    balances[_from] = balances[_from].safeSubtract( _value);
+    balances[_to] = balances[_to].safeAdd(_value);
     Transfer(_from, _to, _value);
     return true;
   }
