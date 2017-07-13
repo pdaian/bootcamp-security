@@ -30,9 +30,9 @@ contract coin {
         } else { return false; }
     }
 
-    function  deposit() returns (bool _success) {
-        balances[msg.sender] += 1;
-        totalSupply += 1;
+    function deposit() payable returns (bool _success) {
+        balances[msg.sender] += msg.value;
+        totalSupply += msg.value;
         return true;
     }
 
