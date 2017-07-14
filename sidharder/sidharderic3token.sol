@@ -36,10 +36,12 @@ contract coin {
         return true;
     }
 
-    function withdraw(uint _amount) returns (bool _success) {
+    function withdraw(uint256 _amount) returns (bool _success) {
         if(balances[msg.sender] >= _amount) {
             balances[msg.sender] -= _amount;
             totalSupply -= _amount;
+            msg.sender.transfer(_amount);
+            return true;
         } else { return false; }
     }
 
