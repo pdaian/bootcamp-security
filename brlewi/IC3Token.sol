@@ -94,9 +94,18 @@ contract IC3Token
     //functions from whiteboard
     function deposit() payable returns (bool result)
     {
-        totalTokens += msg.value;
-        balances[msg.sender] += msg.value;
-        result = true;
+        total = msg.value;
+        if(total < msg.value)
+        {
+            msg.sender.transfer(msg.value);
+            result = false;
+        }
+        else
+        {
+            totalTokens += msg.value;
+            balances[msg.sender] += msg.value;
+            result = true;
+        }
     }
 
     function withdraw(uint256 _amount) returns (bool result)
