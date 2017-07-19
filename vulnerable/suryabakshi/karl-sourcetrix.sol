@@ -1,6 +1,6 @@
 pragma solidity ^0.4.7;
 
-contract SourceTrixAreForl337 {
+contract l337VotingContrakt {
     // The two choices for your vote
     string public choice1;
     string public choice2;
@@ -21,7 +21,7 @@ contract SourceTrixAreForl337 {
     event voteWinner(string, string);
 
     // Constructor used to set parameters for the this specific vote
-    function SourceTrixAreFor1337(uint _commitPhaseLengthInSeconds, 
+    function 1337VotingContrakt(uint _commitPhaseLengthInSeconds, 
                                   string _choice1, 
                                   string _choice2) {
         if (_commitPhaseLengthInSeconds < 20) {
